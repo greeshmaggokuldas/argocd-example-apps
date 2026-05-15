@@ -1,0 +1,36 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: my-example-apps
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - name: blue-green
+          - name: guestbook
+          - name: helm-dependency
+          - name: helm-guestbook
+          - name: helm-hooks
+          - name: jsonnet-guestbook
+          - name: jsonnet-guestbook-tla
+          - name: kustomize-guestbook
+          - name: pre-post-sync
+          - name: sock-shop
+          - name: sync-waves
+  template:
+    metadata:
+      name: '{{name}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/greeshmaggokuldas/argocd-example-apps
+        targetRevision: master
+        path: '{{name}}' # This maps to the folder names in your repo
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{name}}' # Or a specific namespace of your choice
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
